@@ -1,0 +1,21 @@
+Name: task.mq
+ListenOn: 0.0.0.0:10091
+
+MsgChatTransfer:
+  Name: MsgChatTransfer
+  Brokers:
+    - hfcs-nj-a.llycloud.top:31833
+  Group: kafka
+  Topic: msgChatTransfer
+  Offset: first
+  Consumers: 1
+
+Mongo:
+  Url: "mongodb://root:123.com@127.0.0.1:27017"
+  Db: fun-chat
+Redisx:
+  Host: hfcs-nj-a.llycloud.top:31837
+  Type: node
+  Pass: redis_ckZ3H6
+Ws:
+  Host: 127.0.0.1:10090
