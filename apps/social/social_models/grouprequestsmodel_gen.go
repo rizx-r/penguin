@@ -30,6 +30,8 @@ type (
 	groupRequestsModel interface {
 		Insert(ctx context.Context, data *GroupRequests) (sql.Result, error)
 		FindOne(ctx context.Context, id uint64) (*GroupRequests, error)
+		FindByGroupIdAndReqId(ctx context.Context, groupId, reqId string) (*GroupRequests, error)
+		ListNoHandler(ctx context.Context, groupId string) ([]*GroupRequests, error)
 		Update(ctx context.Context, data *GroupRequests) error
 		Delete(ctx context.Context, id uint64) error
 	}
