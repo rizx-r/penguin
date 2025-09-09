@@ -10,12 +10,26 @@ MsgChatTransfer:
   Offset: first
   Consumers: 1
 
+SocialRpc:
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: social.rpc
+
+#Mongo:
+#  Url: "mongodb://root:123.com@127.0.0.1:27017"
+#  Db: fun-chat
+#Mongo:
+#  Url: "mongodb://mongo_zA4m5c:mongo_kXm2re@192.168.5.247:27017"
+#  Db: penguin
 Mongo:
-  Url: "mongodb://root:123.com@127.0.0.1:27017"
-  Db: fun-chat
+  Url: "mongodb://mongo_xpQ4ZK:mongo_8tnaNa@111.170.155.141:18930"
+  Db: penguin
+
 Redisx:
   Host: hfcs-nj-a.llycloud.top:31837
   Type: node
   Pass: redis_ckZ3H6
+
 Ws:
   Host: 127.0.0.1:10090

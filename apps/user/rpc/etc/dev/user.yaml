@@ -1,5 +1,5 @@
 Name: user.rpc
-ListenOn: 0.0.0.0:8080
+ListenOn: 0.0.0.0:10000
 Etcd:
   Hosts:
   - 127.0.0.1:2379
@@ -7,7 +7,8 @@ Etcd:
 
 Mysql:
 #  DataSource: root:mysql_5APtbY@tcp(192.168.11.247:3306)/fun-chat?charset=utf8mb4
-  DataSource: root:mysql_kYPx6x@tcp(hfcs-nj-a.llycloud.top:31838)/fun-chat?charset=utf8mb4
+#  DataSource: root:mysql_kYPx6x@tcp(hfcs-nj-a.llycloud.top:31838)/fun-chat?charset=utf8mb4
+  DataSource: root:mysql_kYPx6x@tcp(hfcs-nj-a.llycloud.top:31838)/penguin?charset=utf8mb4
 
 Redisx:
   Host: hfcs-nj-a.llycloud.top:31837
