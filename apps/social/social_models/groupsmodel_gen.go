@@ -28,10 +28,12 @@ var (
 
 type (
 	groupsModel interface {
-		Insert(ctx context.Context, data *Groups) (sql.Result, error)
+		//Insert(ctx context.Context, data *Groups) (sql.Result, error)
+		Insert(ctx context.Context, session sqlx.Session, data *Groups) (sql.Result, error)
 		FindOne(ctx context.Context, id string) (*Groups, error)
 		Update(ctx context.Context, data *Groups) error
 		Delete(ctx context.Context, id string) error
+		Trans(ctx context.Context, fn func(context.Context, sqlx.Session) error) error
 	}
 
 	defaultGroupsModel struct {
@@ -61,6 +63,12 @@ func newGroupsModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) 
 	}
 }
 
+func (m *defaultGroupsModel) Trans(ctx context.Context, fn func(context.Context, sqlx.Session) error) error {
+	return m.TransactCtx(ctx, func(ctx context.Context, session sqlx.Session) error {
+		return fn(ctx, session)
+	})
+}
+
 func (m *defaultGroupsModel) Delete(ctx context.Context, id string) error {
 	groupsIdKey := fmt.Sprintf("%s%v", cacheGroupsIdPrefix, id)
 	_, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
@@ -87,11 +95,21 @@ func (m *defaultGroupsModel) FindOne(ctx context.Context, id string) (*Groups, e
 	}
 }
 
-func (m *defaultGroupsModel) Insert(ctx context.Context, data *Groups) (sql.Result, error) {
+/*
+	func (m *defaultGroupsModel) Insert(ctx context.Context, data *Groups) (sql.Result, error) {
+		groupsIdKey := fmt.Sprintf("%s%v", cacheGroupsIdPrefix, data.Id)
+		ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
+			query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, groupsRowsExpectAutoSet)
+			return conn.ExecCtx(ctx, query, data.Id, data.Name, data.Icon, data.Status, data.CreatorUid, data.GroupType, data.IsVerify, data.Notification, data.NotificationUid)
+		}, groupsIdKey)
+		return ret, err
+	}
+*/
+func (m *defaultGroupsModel) Insert(ctx context.Context, session sqlx.Session, data *Groups) (sql.Result, error) {
 	groupsIdKey := fmt.Sprintf("%s%v", cacheGroupsIdPrefix, data.Id)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, groupsRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.Id, data.Name, data.Icon, data.Status, data.CreatorUid, data.GroupType, data.IsVerify, data.Notification, data.NotificationUid)
+		return session.ExecCtx(ctx, query, data.Id, data.Name, data.Icon, data.Status, data.CreatorUid, data.GroupType, data.IsVerify, data.Notification, data.NotificationUid)
 	}, groupsIdKey)
 	return ret, err
 }
