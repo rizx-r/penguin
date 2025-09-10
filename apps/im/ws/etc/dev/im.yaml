@@ -1,0 +1,22 @@
+Name: im.ws
+ListenOn: 0.0.0.0:10090
+
+
+JwtAuth:
+  AccessSecret: fun-chat-dawd57cadaec78
+  AccessExpire: 8640000
+
+#Mongo:
+#  Url: "mongodb://root:123.com@127.0.0.1:27017"
+#  Db: fun-chat
+#Mongo:
+#  Url: "mongodb://mongo_zA4m5c:mongo_kXm2re@192.168.5.247:27017"
+#  Db: penguin
+Mongo:
+  Url: "mongodb://mongo_xpQ4ZK:mongo_8tnaNa@111.170.155.141:18930"
+  Db: penguin
+
+MsgChatTransfer:
+  Topic: msgChatTransfer
+  Addrs:
+    - hfcs-nj-a.llycloud.top:31833
