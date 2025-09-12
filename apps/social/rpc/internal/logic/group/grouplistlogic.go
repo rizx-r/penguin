@@ -2,6 +2,7 @@ package group
 
 import (
 	"context"
+	"github.com/jinzhu/copier"
 	"github.com/pkg/errors"
 	"penguin/apps/social/rpc/internal/svc"
 	"penguin/apps/social/rpc/social"
@@ -27,7 +28,6 @@ func NewGroupListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GroupLi
 
 // GroupList 获取用户的群列表
 func (l *GroupListLogic) GroupList(in *social.GroupListReq) (*social.GroupListResp, error) {
-	// todo: add your logic here and delete this line
 	userGroup, err := l.svcCtx.GroupMembersModel.ListByUserId(l.ctx, in.UserId)
 	if err != nil {
 		return nil, errors.Wrapf(xerr.NewDBErr(), "list group member err %v req %v", err, in.UserId)
@@ -41,5 +41,17 @@ func (l *GroupListLogic) GroupList(in *social.GroupListReq) (*social.GroupListRe
 		gids = append(gids, strconv.FormatUint(g.Id, 10)) // string(g.Id)
 	}
 
-	return &social.GroupListResp{}, nil
+	groups, err := l.svcCtx.GroupsModel.ListByGroupIds(l.ctx, gids)
+	if err != nil {
+		return nil, errors.Wrapf(xerr.NewDBErr(), " list group err: %v,, req: %v", err, in)
+	}
+
+	var respList []*social.Groups
+	if err := copier.Copy(&respList, &groups); err != nil {
+		return nil, err
+	}
+
+	return &social.GroupListResp{
+		List: respList,
+	}, nil
 }

@@ -2,6 +2,9 @@ package group
 
 import (
 	"context"
+	"github.com/jinzhu/copier"
+	"github.com/pkg/errors"
+	"penguin/pkg/xerr"
 
 	"penguin/apps/social/rpc/internal/svc"
 	"penguin/apps/social/rpc/social"
@@ -23,8 +26,18 @@ func NewGroupPutinListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Gr
 	}
 }
 
+// GroupPutinList 获取加群申请列表
 func (l *GroupPutinListLogic) GroupPutinList(in *social.GroupPutinListReq) (*social.GroupPutinListResp, error) {
-	// todo: add your logic here and delete this line
+	groupReqs, err := l.svcCtx.GroupRequestsModel.ListNoHandler(l.ctx, in.GroupId)
+	if err != nil {
+		return nil, errors.Wrapf(xerr.NewDBErr(), "list group req err: %v, req: %v", err, in)
+	}
 
-	return &social.GroupPutinListResp{}, nil
+	var respList []*social.GroupRequests
+	if err := copier.Copy(&respList, &groupReqs); err != nil {
+		return nil, err
+	}
+	return &social.GroupPutinListResp{
+		List: respList,
+	}, nil
 }

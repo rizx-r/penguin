@@ -29,8 +29,8 @@ func NewGroupPutInHandleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 	}
 }
 
+// GroupPutInHandle 加群申请处理
 func (l *GroupPutInHandleLogic) GroupPutInHandle(in *social.GroupPutInHandleReq) (*social.GroupPutInHandleResp, error) {
-	// todo: add your logic here and delete this line
 	groupReq, err := l.svcCtx.GroupRequestsModel.FindOne(l.ctx, uint64(in.GroupReqId))
 	if err != nil {
 		return nil, errors.Wrapf(xerr.NewDBErr(), "finding group request err:%v,  id %d", err, in.GroupReqId)

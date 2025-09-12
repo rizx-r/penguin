@@ -33,7 +33,6 @@ func NewGroupPutinLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GroupP
 
 // GroupPutin 加群申请处理
 func (l *GroupPutinLogic) GroupPutin(in *social.GroupPutinReq) (*social.GroupPutinResp, error) {
-	// todo: add your logic here and delete this line
 	/*
 		1. 普通用户申请：
 			群无验证：直接入群
