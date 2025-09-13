@@ -2,6 +2,9 @@ package group
 
 import (
 	"context"
+	"github.com/jinzhu/copier"
+	"penguin/apps/social/rpc/socialclient"
+	"penguin/pkg/ctxdata"
 
 	"penguin/apps/social/api/internal/svc"
 	"penguin/apps/social/api/internal/types"
@@ -24,8 +27,21 @@ func NewGroupListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GroupLi
 	}
 }
 
+// GroupList 获取群列表
 func (l *GroupListLogic) GroupList(req *types.GroupListRep) (resp *types.GroupListResp, err error) {
-	// todo: add your logic here and delete this line
+	uid := ctxdata.GetUid(l.ctx)
+	list, err := l.svcCtx.Social.GroupList(l.ctx, &socialclient.GroupListReq{
+		UserId: uid,
+	})
+	if err != nil {
+		return nil, err
+	}
 
-	return
+	var respList []*types.Groups
+	err = copier.Copy(&respList, &list.List)
+	if err != nil {
+		return nil, err
+	}
+
+	return &types.GroupListResp{List: respList}, nil
 }

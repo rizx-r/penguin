@@ -2,6 +2,8 @@ package group
 
 import (
 	"context"
+	"penguin/apps/social/rpc/socialclient"
+	"penguin/pkg/ctxdata"
 
 	"penguin/apps/social/api/internal/svc"
 	"penguin/apps/social/api/internal/types"
@@ -24,8 +26,18 @@ func NewCreateGroupLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Creat
 	}
 }
 
+// CreateGroup 创建群聊
 func (l *CreateGroupLogic) CreateGroup(req *types.GroupCreateReq) (resp *types.GroupCreateResp, err error) {
-	// todo: add your logic here and delete this line
+	uid := ctxdata.GetUid(l.ctx)
 
+	// 创建群
+	_, err = l.svcCtx.GroupCreate(l.ctx, &socialclient.GroupCreateReq{
+		Name:       req.Name,
+		Icon:       req.Icon,
+		CreatorUid: uid,
+	})
+	if err != nil {
+		return nil, err
+	}
 	return
 }
