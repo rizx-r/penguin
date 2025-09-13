@@ -28,8 +28,8 @@ var (
 
 type (
 	groupMembersModel interface {
-		//Insert(ctx context.Context, data *GroupMembers) (sql.Result, error)
-		Insert(ctx context.Context, session sqlx.Session, data *GroupMembers) (sql.Result, error)
+		Insert(ctx context.Context, data *GroupMembers) (sql.Result, error)
+		TransInsert(ctx context.Context, session sqlx.Session, data *GroupMembers) (sql.Result, error)
 		FindOne(ctx context.Context, id uint64) (*GroupMembers, error)
 		FindByGroudIdAndUserId(ctx context.Context, userId, groupId string) (*GroupMembers, error)
 		ListByUserId(ctx context.Context, userId string) ([]*GroupMembers, error)
@@ -43,7 +43,7 @@ type (
 		table string
 	}
 
-	GroupMembers struct {
+	GroupMembers struct { // GroupMember ?
 		Id          uint64         `db:"id"`
 		GroupId     string         `db:"group_id"`
 		UserId      string         `db:"user_id"`
@@ -51,7 +51,7 @@ type (
 		JoinTime    sql.NullTime   `db:"join_time"`
 		JoinSource  sql.NullInt64  `db:"join_source"`
 		InviterUid  sql.NullString `db:"inviter_uid"`
-		OperatorUid sql.NullString `db:"operator_uid"`
+		OperatorUid string         `db:"operator_uid"`
 	}
 )
 
@@ -99,7 +99,6 @@ func (m *defaultGroupMembersModel) FindByGroudIdAndUserId(ctx context.Context, u
 	default:
 		return nil, err
 	}
-
 }
 
 func (m *defaultGroupMembersModel) ListByUserId(ctx context.Context, userId string) ([]*GroupMembers, error) {
@@ -130,17 +129,16 @@ func (m *defaultGroupMembersModel) ListByGroupId(ctx context.Context, groupId st
 	}
 }
 
-/*
-	func (m *defaultGroupMembersModel) Insert(ctx context.Context, data *GroupMembers) (sql.Result, error) {
-		groupMembersIdKey := fmt.Sprintf("%s%v", cacheGroupMembersIdPrefix, data.Id)
-		ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-			query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?)", m.table, groupMembersRowsExpectAutoSet)
-			return conn.ExecCtx(ctx, query, data.GroupId, data.UserId, data.RoleLevel, data.JoinTime, data.JoinSource, data.InviterUid, data.OperatorUid)
-		}, groupMembersIdKey)
-		return ret, err
-	}
-*/
-func (m *defaultGroupMembersModel) Insert(ctx context.Context, session sqlx.Session, data *GroupMembers) (sql.Result, error) {
+func (m *defaultGroupMembersModel) Insert(ctx context.Context, data *GroupMembers) (sql.Result, error) {
+	groupMembersIdKey := fmt.Sprintf("%s%v", cacheGroupMembersIdPrefix, data.Id)
+	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?)", m.table, groupMembersRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.GroupId, data.UserId, data.RoleLevel, data.JoinTime, data.JoinSource, data.InviterUid, data.OperatorUid)
+	}, groupMembersIdKey)
+	return ret, err
+}
+
+func (m *defaultGroupMembersModel) TransInsert(ctx context.Context, session sqlx.Session, data *GroupMembers) (sql.Result, error) {
 	groupMembersIdKey := fmt.Sprintf("%s%v", cacheGroupMembersIdPrefix, data.Id)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?)", m.table, groupMembersRowsExpectAutoSet)

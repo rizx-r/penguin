@@ -29,11 +29,12 @@ var (
 type (
 	groupsModel interface {
 		//Insert(ctx context.Context, data *Groups) (sql.Result, error)
+		Trans(ctx context.Context, fn func(context.Context, sqlx.Session) error) error
 		Insert(ctx context.Context, session sqlx.Session, data *Groups) (sql.Result, error)
 		FindOne(ctx context.Context, id string) (*Groups, error)
+		ListByGroupIds(ctx context.Context, ids []string) ([]*Groups, error)
 		Update(ctx context.Context, data *Groups) error
 		Delete(ctx context.Context, id string) error
-		Trans(ctx context.Context, fn func(context.Context, sqlx.Session) error) error
 	}
 
 	defaultGroupsModel struct {
@@ -90,6 +91,19 @@ func (m *defaultGroupsModel) FindOne(ctx context.Context, id string) (*Groups, e
 		return &resp, nil
 	case sqlc.ErrNotFound:
 		return nil, ErrNotFound
+	default:
+		return nil, err
+	}
+}
+
+func (m *defaultGroupsModel) ListByGroupIds(ctx context.Context, ids []string) ([]*Groups, error) {
+	query := fmt.Sprintf("select %s from %s where `id` in (?)", groupsRows, m.table)
+	var resp []*Groups
+	idStr := strings.Join(ids, ",")
+	err := m.QueryRowsNoCacheCtx(ctx, &resp, query, idStr)
+	switch err {
+	case nil:
+		return resp, nil
 	default:
 		return nil, err
 	}
