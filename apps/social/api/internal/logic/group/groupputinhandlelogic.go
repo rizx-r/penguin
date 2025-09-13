@@ -18,7 +18,7 @@ type GroupPutInHandleLogic struct {
 	svcCtx *svc.ServiceContext
 }
 
-// 申请进群处理
+// NewGroupPutInHandleLogic 申请进群处理
 func NewGroupPutInHandleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GroupPutInHandleLogic {
 	return &GroupPutInHandleLogic{
 		Logger: logx.WithContext(ctx),
