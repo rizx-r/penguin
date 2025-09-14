@@ -2,7 +2,9 @@ package group
 
 import (
 	"context"
+	"penguin/apps/im/rpc/im"
 	"penguin/apps/social/rpc/socialclient"
+	"penguin/pkg/constants"
 	"penguin/pkg/ctxdata"
 
 	"penguin/apps/social/api/internal/svc"
@@ -17,7 +19,7 @@ type GroupPutInLogic struct {
 	svcCtx *svc.ServiceContext
 }
 
-// 申请进群
+// NewGroupPutInLogic 申请进群
 func NewGroupPutInLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GroupPutInLogic {
 	return &GroupPutInLogic{
 		Logger: logx.WithContext(ctx),
@@ -28,12 +30,20 @@ func NewGroupPutInLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GroupP
 
 func (l *GroupPutInLogic) GroupPutIn(req *types.GroupPutInRep) (resp *types.GroupPutInResp, err error) {
 	uid := ctxdata.GetUid(l.ctx)
-	_, err = l.svcCtx.Social.GroupPutin(l.ctx, &socialclient.GroupPutinReq{
+	res, err := l.svcCtx.Social.GroupPutin(l.ctx, &socialclient.GroupPutinReq{
 		GroupId:    req.GroupId,
 		ReqId:      uid,
 		ReqMsg:     req.ReqMsg,
 		ReqTime:    req.ReqTime,
 		JoinSource: int32(req.JoinSource),
+	})
+	if err != nil || res.GroupId == "" {
+		return nil, err
+	}
+	_, err = l.svcCtx.Im.SetUpUserConversation(l.ctx, &im.SetUpUserConversationReq{
+		SendId:   uid,
+		RecvId:   res.GroupId,
+		ChatType: int32(constants.GroupChatType),
 	})
 	return nil, err
 }

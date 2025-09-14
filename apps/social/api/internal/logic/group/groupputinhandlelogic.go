@@ -2,6 +2,7 @@ package group
 
 import (
 	"context"
+	"penguin/apps/im/rpc/im"
 	"penguin/apps/social/rpc/socialclient"
 	"penguin/pkg/constants"
 	"penguin/pkg/ctxdata"
@@ -28,10 +29,11 @@ func NewGroupPutInHandleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 }
 
 func (l *GroupPutInHandleLogic) GroupPutInHandle(req *types.GroupPutInHandleRep) (resp *types.GroupPutInHandleResp, err error) {
-	_, err = l.svcCtx.Social.GroupPutInHandle(l.ctx, &socialclient.GroupPutInHandleReq{
+	uid := ctxdata.GetUid(l.ctx)
+	res, err := l.svcCtx.Social.GroupPutInHandle(l.ctx, &socialclient.GroupPutInHandleReq{
 		GroupReqId:   req.GroupReqId,
 		GroupId:      req.GroupId,
-		HandleUid:    ctxdata.GetUid(l.ctx),
+		HandleUid:    uid,
 		HandleResult: req.HandleResult,
 	})
 
@@ -39,7 +41,14 @@ func (l *GroupPutInHandleLogic) GroupPutInHandle(req *types.GroupPutInHandleRep)
 		return
 	}
 
-	// todo: 通过后的业务
+	if err != nil || res.GroupId == "" {
+		return nil, err
+	}
 
-	return
+	_, err = l.svcCtx.Im.SetUpUserConversation(l.ctx, &im.SetUpUserConversationReq{
+		SendId:   uid,
+		RecvId:   res.GroupId,
+		ChatType: int32(constants.GroupChatType),
+	})
+	return nil, err
 }
