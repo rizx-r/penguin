@@ -2,6 +2,7 @@ package group
 
 import (
 	"context"
+	"penguin/apps/im/rpc/imclient"
 	"penguin/apps/social/rpc/socialclient"
 	"penguin/pkg/ctxdata"
 
@@ -17,7 +18,7 @@ type CreateGroupLogic struct {
 	svcCtx *svc.ServiceContext
 }
 
-// 创群
+// NewCreateGroupLogic 创群
 func NewCreateGroupLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateGroupLogic {
 	return &CreateGroupLogic{
 		Logger: logx.WithContext(ctx),
@@ -26,18 +27,24 @@ func NewCreateGroupLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Creat
 	}
 }
 
-// CreateGroup 创建群聊
+// CreateGroup 创建群聊的业务逻辑
 func (l *CreateGroupLogic) CreateGroup(req *types.GroupCreateReq) (resp *types.GroupCreateResp, err error) {
 	uid := ctxdata.GetUid(l.ctx)
 
 	// 创建群
-	_, err = l.svcCtx.GroupCreate(l.ctx, &socialclient.GroupCreateReq{
+	res, err := l.svcCtx.GroupCreate(l.ctx, &socialclient.GroupCreateReq{
 		Name:       req.Name,
 		Icon:       req.Icon,
 		CreatorUid: uid,
 	})
-	if err != nil {
+	if err != nil || res.Id == "" {
 		return nil, err
 	}
-	return
+
+	// 建立会话
+	_, err = l.svcCtx.Im.CreateGroupConversation(l.ctx, &imclient.CreateGroupConversationReq{
+		GroupId:  res.Id,
+		CreateId: uid,
+	})
+	return nil, err
 }
