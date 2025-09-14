@@ -1,0 +1,15 @@
+Name: im.rpc
+ListenOn: 0.0.0.0:8080
+Etcd:
+  Hosts:
+  - 127.0.0.1:2379
+  Key: im.rpc
+#Mongo:
+#  Url: "mongodb://root:123.com@127.0.0.1:27017"
+#  Db: fun-chat
+#Mongo:
+#  Url: "mongodb://mongo_zA4m5c:mongo_kXm2re@192.168.5.247:27017"
+#  Db: penguin
+Mongo:
+  Url: "mongodb://user:password@127.0.0.1:27017"
+  Db: penguin
