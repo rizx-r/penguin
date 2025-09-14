@@ -9,7 +9,7 @@ import (
 	"penguin/apps/social/api/internal/types"
 )
 
-// 创群
+// CreateGroupHandler 创键群
 func CreateGroupHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req types.GroupCreateReq
