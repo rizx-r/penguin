@@ -1,4 +1,4 @@
-package model
+package im_models
 
 import (
 	"time"
@@ -8,7 +8,10 @@ import (
 
 type Conversations struct {
 	ID primitive.ObjectID `bson:"_id,omitempty" json:"id,omitempty"`
-	// TODO: Fill your own fields
+
+	UserId           string                   `bson:"userId"`
+	ConversationList map[string]*Conversation `bson:"conversationList"`
+
 	UpdateAt time.Time `bson:"updateAt,omitempty" json:"updateAt,omitempty"`
 	CreateAt time.Time `bson:"createAt,omitempty" json:"createAt,omitempty"`
 }

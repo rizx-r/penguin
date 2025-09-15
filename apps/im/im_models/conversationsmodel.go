@@ -1,4 +1,4 @@
-package model
+package im_models
 
 import "github.com/zeromicro/go-zero/core/stores/mon"
 
@@ -22,4 +22,8 @@ func NewConversationsModel(url, db, collection string) ConversationsModel {
 	return &customConversationsModel{
 		defaultConversationsModel: newDefaultConversationsModel(conn),
 	}
+}
+
+func MustConversationsModel(url string, db string) ConversationsModel {
+	return NewConversationsModel(url, db, "conversations")
 }
