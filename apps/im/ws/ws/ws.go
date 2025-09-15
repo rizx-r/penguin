@@ -22,10 +22,18 @@ type (
 	Push struct {
 		ConversationId     string `mapstructure:"conversationId"`
 		constants.ChatType `mapstructure:"chatType"`
-		SendId             string `mapstructure:"sendId"`
-		RecvId             string `mapstructure:"recvId"`
-		SendTime           int64  `mapstructure:"sendTime"`
+		SendId             string   `mapstructure:"sendId"`
+		RecvId             string   `mapstructure:"recvId"`
+		RecvIds            []string `mapstructure:"recvIds"`
+		SendTime           int64    `mapstructure:"sendTime"`
 		constants.MType    `mapstructure:"mType"`
 		Content            string `mapstructure:"content"`
+	}
+
+	MarkRead struct {
+		constants.ChatType `mapstructure:",chatType"`
+		RecvId             string   `mapstructure:"recvId"`         // 要把这个MarkRead推送给谁
+		ConversationId     string   `mapstructure:"conversationId"` //	会话id
+		MsgIds             []string `mapstructure:"msgIds"`         // 已读消息的id
 	}
 )
