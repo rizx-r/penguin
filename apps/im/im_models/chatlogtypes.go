@@ -23,7 +23,7 @@ type (
 		MsgContent     string             `bson:"msgContent"`
 		SendTime       int64              `bson:"sendTime"`
 		Status         int                `bson:"status"`
-		ReadRecords    []byte             `bson:"readRecords"` // 记录已读
+		ReadRecords    []byte             `bson:"readRecords"` // 记录已读的消息
 
 		UpdateAt time.Time `bson:"updateAt,omitempty" json:"update_at,omitempty"` // omitempty: 当字段的值是该类型的零值时，序列化（转成 bson/json）时会自动忽略这个字段，不输出到结果里。
 		CreateAt time.Time `bson:"createAt,omitempty" json:"create_at,omitempty"`
