@@ -2,7 +2,7 @@
 // versions:
 //  goctl version: 1.8.5
 
-package models
+package user_models
 
 import (
 	"context"
@@ -106,7 +106,7 @@ func (m *defaultUsersModel) FindByPhone(ctx context.Context, phone string) (*Use
 	}
 }
 
-func (m *defaultUsersModel) ListByNickname(ctx context.Context, nickname string) ([]*Users, error)  {
+func (m *defaultUsersModel) ListByNickname(ctx context.Context, nickname string) ([]*Users, error) {
 	query := fmt.Sprintf("select %s from %s where `nickname` like %%?%", usersRows, m.table)
 
 	var resp []*Users
@@ -119,7 +119,7 @@ func (m *defaultUsersModel) ListByNickname(ctx context.Context, nickname string)
 	}
 }
 
-func (m *defaultUsersModel) ListByIds(ctx context.Context, ids []string) ([]*Users, error)  {
+func (m *defaultUsersModel) ListByIds(ctx context.Context, ids []string) ([]*Users, error) {
 	query := fmt.Sprintf("select %s from %s where `id` in ('%s')?", usersRows, m.table, strings.Join(ids, "','"))
 
 	var resp []*Users

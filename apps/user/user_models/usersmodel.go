@@ -1,4 +1,4 @@
-package models
+package user_models
 
 import (
 	"github.com/zeromicro/go-zero/core/stores/cache"
