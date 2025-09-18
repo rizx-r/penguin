@@ -18,10 +18,15 @@ import (
 type chatLogModel interface {
 	Insert(ctx context.Context, data *ChatLog) error
 	FindOne(ctx context.Context, id string) (*ChatLog, error)
-	Update(ctx context.Context, data *ChatLog) (*mongo.UpdateResult, error)
-	Delete(ctx context.Context, id string) (int64, error)
 	// 查询聊天记录
 	ListBySendTime(ctx context.Context, conversionId string, startSendTime, endSendTime, limit int64) ([]*ChatLog, error)
+	ListByMsgIds(ctx context.Context, msgIds []string) ([]*ChatLog, error)
+
+	Update(ctx context.Context, data *ChatLog) (*mongo.UpdateResult, error)
+	// 修改已读信息
+	UpdateMarkRead(ctx context.Context, id primitive.ObjectID, readRecords []byte) error
+
+	Delete(ctx context.Context, id string) (int64, error)
 }
 
 type defaultChatLogModel struct {
@@ -62,11 +67,35 @@ func (m *defaultChatLogModel) FindOne(ctx context.Context, id string) (*ChatLog,
 	}
 }
 
+func (m *defaultChatLogModel) ListByMsgIds(ctx context.Context, msgIds []string) ([]*ChatLog, error) {
+	var res []*ChatLog
+	ids := make([]primitive.ObjectID, len(msgIds))
+	for _, id := range msgIds {
+		oid, _ := primitive.ObjectIDFromHex(id)
+		ids = append(ids, oid)
+	}
+	filter := bson.M{"_id": bson.M{"$in": ids}}
+	err := m.conn.FindOne(ctx, &res, filter)
+	switch err {
+	case nil:
+		return res, nil
+	case mon.ErrNotFound:
+		return nil, ErrNotFound
+	default:
+		return nil, err
+	}
+}
+
 func (m *defaultChatLogModel) Update(ctx context.Context, data *ChatLog) (*mongo.UpdateResult, error) {
 	data.UpdateAt = time.Now()
 
 	res, err := m.conn.UpdateOne(ctx, bson.M{"_id": data.ID}, bson.M{"$set": data})
 	return res, err
+}
+
+func (m *defaultChatLogModel) UpdateMarkRead(ctx context.Context, id primitive.ObjectID, readRecords []byte) error {
+	_, err := m.conn.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"read_records": readRecords}})
+	return err
 }
 
 func (m *defaultChatLogModel) Delete(ctx context.Context, id string) (int64, error) {
