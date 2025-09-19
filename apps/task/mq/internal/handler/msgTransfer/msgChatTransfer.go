@@ -4,31 +4,28 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/zeromicro/go-zero/core/logx"
 	"penguin/apps/im/im_models"
-	"penguin/apps/im/ws/websocket"
+	"penguin/apps/im/ws/ws"
 	"penguin/apps/task/mq/internal/svc"
 	"penguin/apps/task/mq/mq"
-	"penguin/pkg/constants"
+	"penguin/pkg/bitmap"
 	"time"
 )
 
 type (
 	MsgChatTransfer struct {
-		logx.Logger
-		svc *svc.ServiceContext
+		*BaseMsgTransfer
 	}
 )
 
 func NewMsgChatTransfer(svcContext *svc.ServiceContext) *MsgChatTransfer {
 	return &MsgChatTransfer{
-		Logger: logx.WithContext(context.Background()),
-		svc:    svcContext,
+		BaseMsgTransfer: NewBaseMsgTransfer(svcContext),
 	}
 }
 
 func (m *MsgChatTransfer) Consume(ctx context.Context, key, value string) error {
-	fmt.Printf("key: %s, value: %s\n", key, value)
+	fmt.Printf("[Consume] key: %s, value: %s\n", key, value)
 	var (
 		data mq.MsgChatTransfer
 		//ctx  = context.Background()
@@ -43,12 +40,15 @@ func (m *MsgChatTransfer) Consume(ctx context.Context, key, value string) error 
 		return err
 	}
 
-	// 推送消息
-	return m.svc.WsClient.Send(websocket.Message{
-		FrameType: websocket.FrameData,
-		Method:    "push",
-		FormId:    constants.SYSTEM_ROOT_UID,
-		Data:      data,
+	return m.Transfer(ctx, &ws.Push{
+		ConversationId: data.ConversationId,
+		ChatType:       data.ChatType,
+		SendId:         data.SendId,
+		RecvId:         data.RecvId,
+		RecvIds:        data.RecvIds,
+		SendTime:       data.SendTime,
+		MType:          data.MType,
+		Content:        data.Content,
 	})
 }
 
@@ -66,5 +66,14 @@ func (m *MsgChatTransfer) addChatLog(ctx context.Context, data *mq.MsgChatTransf
 		UpdateAt:       time.Time{},
 		CreateAt:       time.Time{},
 	}
-	return m.svc.ChatLogModel.Insert(ctx, &chatlog)
+
+	readRecords := bitmap.NewBitmap(0)
+	readRecords.Set(chatlog.SendID)
+	chatlog.ReadRecords = readRecords.Export()
+
+	err := m.svcCtx.ChatLogModel.Insert(ctx, &chatlog)
+	if err != nil {
+		return err
+	}
+	return m.svcCtx.ConversationModel.UpdateMsg(ctx, &chatlog)
 }
