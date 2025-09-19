@@ -28,7 +28,7 @@ func main() {
 		websocket.WithServerAuthentication(handler.NewJwtAuth(ctx)),
 		//websocket.WithServerAck(websocket.NoAck),
 		//websocket.WithServerAck(websocket.OnlyAck),
-		websocket.WithServerAck(websocket.RigorAck),
+		//websocket.WithServerAck(websocket.RigorAck),
 		/*websocket.WithServerMaxConnectionIdle(10*time.Second)*/
 	)
 	defer srv.Stop()

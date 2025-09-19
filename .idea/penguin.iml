@@ -2,7 +2,14 @@
 <module type="WEB_MODULE" version="4">
   <component name="Go" enabled="true" />
   <component name="NewModuleRootManager">
-    <content url="file://$MODULE_DIR$" />
+    <content url="file://$MODULE_DIR$">
+      <excludeFolder url="file://$MODULE_DIR$/.idea/dataSources" />
+      <excludeFolder url="file://$MODULE_DIR$/apps/social/api/etc/dev" />
+      <excludeFolder url="file://$MODULE_DIR$/apps/social/rpc/etc/dev" />
+      <excludeFolder url="file://$MODULE_DIR$/apps/task/mq/etc/dev" />
+      <excludeFolder url="file://$MODULE_DIR$/apps/user/api/etc/dev" />
+      <excludeFolder url="file://$MODULE_DIR$/apps/user/rpc/etc/dev" />
+    </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>

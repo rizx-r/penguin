@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/pkg/errors"
-	"penguin/apps/user/models"
+	"penguin/apps/user/user_models"
 	"penguin/pkg/ctxdata"
 	"penguin/pkg/encrypt"
 	"penguin/pkg/xerr"
@@ -41,7 +41,7 @@ func (l *LoginLogic) Login(in *user.LoginReq) (*user.LoginResp, error) {
 	fmt.Println("userEntity2: ", userEntity2)
 
 	if err != nil {
-		if err == models.ErrNotFound {
+		if err == user_models.ErrNotFound {
 			return nil, errors.WithStack(xerr.ErrPhoneNotRegistered)
 		}
 		return nil, errors.Wrapf(xerr.NewDBErr(), "error: find user by phone. err: %v, request: %v", err, in.Phone)

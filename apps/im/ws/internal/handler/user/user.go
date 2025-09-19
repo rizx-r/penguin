@@ -8,6 +8,7 @@ import (
 func Online(svc *svc.ServiceContext) websocketx.HandlerFunc {
 	return func(srv *websocketx.Server, conn *websocketx.Conn, msg *websocketx.Message) {
 		uids := srv.GetUsers()
+		//fmt.Println("0xadawdasd", uids)
 		u := srv.GetUsers(conn)
 		err := srv.Send(websocketx.NewMessage(u[0], uids), conn)
 		srv.Info("Error on sending online users: %v", err)

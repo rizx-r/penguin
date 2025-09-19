@@ -7,7 +7,7 @@ import (
 	"penguin/pkg/xerr"
 
 	//"errors"
-	"penguin/apps/user/models"
+	"penguin/apps/user/user_models"
 	"penguin/pkg/ctxdata"
 	"penguin/pkg/encrypt"
 	"penguin/pkg/wuid"
@@ -41,7 +41,7 @@ func (l *RegisterLogic) Register(in *user.RegisterReq) (*user.RegisterResp, erro
 	// todo: add your logic here and delete this line
 
 	userEntity, err := l.svcCtx.UsersModel.FindByPhone(l.ctx, in.Phone)
-	if err != nil && err != models.ErrNotFound {
+	if err != nil && err != user_models.ErrNotFound {
 		return nil, err
 	}
 
@@ -50,7 +50,7 @@ func (l *RegisterLogic) Register(in *user.RegisterReq) (*user.RegisterResp, erro
 		return nil, xerr.ErrPhoneRegistered
 	}
 
-	userEntity = &models.Users{
+	userEntity = &user_models.Users{
 		Id:       wuid.GenUid(l.svcCtx.Config.Mysql.Datasource),
 		Avatar:   in.Avatar,
 		Nickname: in.Nickname,

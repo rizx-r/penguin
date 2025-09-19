@@ -3,7 +3,7 @@ package logic
 import (
 	"context"
 	"github.com/jinzhu/copier"
-	"penguin/apps/user/models"
+	"penguin/apps/user/user_models"
 
 	"penguin/apps/user/rpc/internal/svc"
 	"penguin/apps/user/rpc/user"
@@ -29,7 +29,7 @@ func (l *FindUserLogic) FindUser(in *user.FindUserReq) (*user.FindUserResp, erro
 	// todo: add your logic here and delete this line
 
 	var (
-		userEntitys []*models.Users
+		userEntitys []*user_models.Users
 		err         error
 		resp        []*user.UserEntity
 	)

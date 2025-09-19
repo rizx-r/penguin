@@ -33,7 +33,7 @@ func main() {
 		serviceGroup.Add(s)
 	}
 
-	fmt.Println("Task Service starting ...")
+	fmt.Println("Task Service starting on 10091 ...")
 	serviceGroup.Start()
 }
 

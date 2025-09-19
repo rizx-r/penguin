@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/gorilla/websocket"
 	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/threading"
 	"net/http"
 	"sync"
 	"time"
@@ -23,6 +24,7 @@ type (
 		userToConn     map[string]*Conn
 		upgrader       *websocket.Upgrader // ?? *
 		logx.Logger
+		*threading.TaskRunner
 	}
 
 	AckType int
@@ -58,6 +60,7 @@ func NewServer(addr string, opts ...ServerOptions) *Server {
 		userToConn:     make(map[string]*Conn),
 		upgrader:       &websocket.Upgrader{},
 		Logger:         logx.WithContext(context.Background()),
+		TaskRunner:     threading.NewTaskRunner(opt.concurrency),
 	}
 }
 
@@ -179,8 +182,11 @@ func (srv *Server) Send(msg interface{}, conns ...*Conn) error {
 	}
 	data, err := json.Marshal(msg) // 把 msg 转成 JSON。
 	if err != nil {
+		srv.Errorf("json marshal error: %v", err)
 		return err
 	}
+
+	fmt.Println("conns: ", conns)
 
 	for _, conn := range conns {
 		/*
@@ -189,6 +195,7 @@ func (srv *Server) Send(msg interface{}, conns ...*Conn) error {
 			 群发：传多个连接
 		*/
 		if err = conn.WriteMessage(websocket.TextMessage, data); err != nil {
+			srv.Errorf("websocket write error: %v", err)
 			return err
 		}
 	}

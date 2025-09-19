@@ -34,6 +34,7 @@ message Groups {
   string notificationUid = 9;
 }
 
+// 群成员
 message GroupMembers {
   int32  id = 1;
   string groupId = 2;

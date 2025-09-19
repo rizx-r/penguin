@@ -13,19 +13,21 @@ type (
 
 // HandlerResult
 const (
-	NoHandleResult HandlerResult = iota + 1
-	PassHandleResult
-	RefuseHandleResult
-	CancelHandleResult
+	NoHandleResult     HandlerResult = iota + 1 // 未处理
+	PassHandleResult                            // 已通过
+	RefuseHandleResult                          // 已拒绝
+	CancelHandleResult                          // 已取消
 )
 
+// GroupRoleLevel
 const (
-	MasterGroupRoleLevel GroupRoleLevel = iota + 1
-	ManagerGroupRoleLevel
-	OrdinaryGroupRoleLevel
+	MasterGroupRoleLevel   GroupRoleLevel = iota + 1 // 群主
+	ManagerGroupRoleLevel                            // 管理员
+	OrdinaryGroupRoleLevel                           // 普通群成员
 )
 
+// GroupJoinSource
 const (
-	InviteGroupJoinSource GroupJoinSource = iota + 1
-	PutInGroupJoinSource
+	InviteGroupJoinSource GroupJoinSource = iota + 1 // 被邀请
+	PutInGroupJoinSource                             // 自己申请
 )

@@ -90,7 +90,6 @@ func (c *Conn) ReadMessage() (messageType int, p []byte, err error) {
 func (c *Conn) WriteMessage(messageType int, p []byte) error {
 	c.idleMu.Lock()
 	defer c.idleMu.Unlock()
-
 	err := c.Conn.WriteMessage(messageType, p)
 	c.idle = time.Time{} // 同样清零
 	return err

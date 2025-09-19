@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"penguin/pkg/interceptor/rpc_server"
 
 	"penguin/apps/im/rpc/im"
 	"penguin/apps/im/rpc/internal/config"
@@ -16,7 +17,7 @@ import (
 	"google.golang.org/grpc/reflection"
 )
 
-var configFile = flag.String("f", "etc/im.yaml", "the config file")
+var configFile = flag.String("f", "etc/dev/im.yaml", "the config file")
 
 func main() {
 	flag.Parse()
@@ -32,6 +33,8 @@ func main() {
 			reflection.Register(grpcServer)
 		}
 	})
+	s.AddUnaryInterceptors(rpc_server.LogInterceptor)
+
 	defer s.Stop()
 
 	fmt.Printf("Starting rpc server at %s...\n", c.ListenOn)

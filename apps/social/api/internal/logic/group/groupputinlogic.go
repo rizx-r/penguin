@@ -2,6 +2,7 @@ package group
 
 import (
 	"context"
+	"fmt"
 	"penguin/apps/im/rpc/im"
 	"penguin/apps/social/rpc/socialclient"
 	"penguin/pkg/constants"
@@ -28,13 +29,15 @@ func NewGroupPutInLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GroupP
 	}
 }
 
-func (l *GroupPutInLogic) GroupPutIn(req *types.GroupPutInRep) (resp *types.GroupPutInResp, err error) {
+func (l *GroupPutInLogic) GroupPutIn(req *types.GroupPutInReq) (resp *types.GroupPutInResp, err error) {
+	fmt.Println("0xcawdfefefse", req)
+
 	uid := ctxdata.GetUid(l.ctx)
 	res, err := l.svcCtx.Social.GroupPutin(l.ctx, &socialclient.GroupPutinReq{
-		GroupId:    req.GroupId,
-		ReqId:      uid,
-		ReqMsg:     req.ReqMsg,
-		ReqTime:    req.ReqTime,
+		GroupId: req.GroupId,
+		ReqId:   uid,
+		ReqMsg:  req.ReqMsg,
+		//ReqTime:    req.ReqTime,
 		JoinSource: int32(req.JoinSource),
 	})
 	if err != nil || res.GroupId == "" {

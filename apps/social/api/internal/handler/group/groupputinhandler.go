@@ -1,6 +1,7 @@
 package group
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/zeromicro/go-zero/rest/httpx"
@@ -12,8 +13,10 @@ import (
 // 申请进群
 func GroupPutInHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req types.GroupPutInRep
+		var req types.GroupPutInReq
 		if err := httpx.Parse(r, &req); err != nil {
+			fmt.Println("0xadwawdefaf", req)
+
 			httpx.ErrorCtx(r.Context(), w, err)
 			return
 		}

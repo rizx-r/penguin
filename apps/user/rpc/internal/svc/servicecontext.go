@@ -3,8 +3,8 @@ package svc
 import (
 	"github.com/zeromicro/go-zero/core/stores/redis"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
-	"penguin/apps/user/models"
 	"penguin/apps/user/rpc/internal/config"
+	"penguin/apps/user/user_models"
 	"penguin/pkg/constants"
 	"penguin/pkg/ctxdata"
 	"time"
@@ -13,7 +13,7 @@ import (
 type ServiceContext struct {
 	Config config.Config
 	*redis.Redis
-	models.UsersModel
+	user_models.UsersModel
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -22,7 +22,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	return &ServiceContext{
 		Config:     c,
 		Redis:      redis.MustNewRedis(c.Redisx),
-		UsersModel: models.NewUsersModel(sqlConn, c.Cache),
+		UsersModel: user_models.NewUsersModel(sqlConn, c.Cache),
 	}
 }
 

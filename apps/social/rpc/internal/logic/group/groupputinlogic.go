@@ -77,7 +77,7 @@ func (l *GroupPutinLogic) GroupPutin(in *social.GroupPutinReq) (*social.GroupPut
 			Valid:  true,
 		},
 		ReqTime: sql.NullTime{
-			Time:  time.Unix(in.ReqTime, 0),
+			Time:  time.Now(), /*time.Unix(in.ReqTime, 0)*/
 			Valid: true,
 		},
 		JoinSource: sql.NullInt64{

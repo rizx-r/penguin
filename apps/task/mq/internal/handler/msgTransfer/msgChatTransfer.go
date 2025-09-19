@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"penguin/apps/im/im_models"
 	"penguin/apps/im/ws/ws"
 	"penguin/apps/task/mq/internal/svc"
@@ -29,6 +30,7 @@ func (m *MsgChatTransfer) Consume(ctx context.Context, key, value string) error 
 	var (
 		data mq.MsgChatTransfer
 		//ctx  = context.Background()
+		msgId = primitive.NewObjectID()
 	)
 
 	if err := json.Unmarshal([]byte(value), &data); err != nil {
@@ -36,7 +38,7 @@ func (m *MsgChatTransfer) Consume(ctx context.Context, key, value string) error 
 	}
 
 	// 记录数据
-	if err := m.addChatLog(ctx, &data); err != nil {
+	if err := m.addChatLog(ctx, msgId, &data); err != nil {
 		return err
 	}
 
@@ -48,14 +50,16 @@ func (m *MsgChatTransfer) Consume(ctx context.Context, key, value string) error 
 		RecvIds:        data.RecvIds,
 		SendTime:       data.SendTime,
 		MType:          data.MType,
+		MsgId:          msgId.Hex(),
 		Content:        data.Content,
 	})
 }
 
-func (m *MsgChatTransfer) addChatLog(ctx context.Context, data *mq.MsgChatTransfer) error {
+func (m *MsgChatTransfer) addChatLog(ctx context.Context, msgId primitive.ObjectID, data *mq.MsgChatTransfer) error {
 	// 记录消息
 	chatlog := im_models.ChatLog{
 		ConversationID: data.ConversationId,
+		ID:             msgId,
 		SendID:         data.SendId,
 		RecvID:         data.RecvId,
 		MsgFrom:        0,

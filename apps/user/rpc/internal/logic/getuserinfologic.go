@@ -3,7 +3,7 @@ package logic
 import (
 	"context"
 	"errors"
-	"penguin/apps/user/models"
+	"penguin/apps/user/user_models"
 	"penguin/pkg/xerr"
 
 	"penguin/apps/user/rpc/internal/svc"
@@ -32,7 +32,7 @@ func (l *GetUserInfoLogic) GetUserInfo(in *user.GetUserInfoReq) (*user.GetUserIn
 
 	userEntity, err := l.svcCtx.UsersModel.FindOne(l.ctx, in.Id)
 	if err != nil {
-		if err == models.ErrNotFound {
+		if err == user_models.ErrNotFound {
 			return nil, xerr.ErrUserPwdNotMatched
 		}
 		return nil, err

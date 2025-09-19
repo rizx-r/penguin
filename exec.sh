@@ -15,3 +15,6 @@ goctl api go -api apps/user/api/user.api -dir apps/user/api -style gozero
 
 # ===apps/im===
 goctl model mongo --type chatLog --dir ./apps/im/im_models
+goctl model mongo --type conversations --dir ./apps/im/im_models/
+goctl model mongo --type conversation --dir ./apps/im/im_models/
+goctl rpc protoc apps/im/rpc/im.proto --go_out=./apps/im/rpc --go-grpc_out=./apps/im/rpc --zrpc_out=./apps/im/rpc
