@@ -5,6 +5,8 @@ import "penguin/pkg/constants"
 
 type (
 	Msg struct {
+		MsgId           string                  `mapstructure:"msgId"`
+		ReadRecords     map[string]string       `mapstructure:"readRecords"`
 		constants.MType `mapstructure:",mType"` // mapstructure 把 map[string]interface{} 这样的动态数据 自动解码 到 Go 的 struct 里。
 		Content         string                  `mapstructure:"content"`
 	}

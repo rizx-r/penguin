@@ -120,7 +120,7 @@ func (m *defaultGroupMembersModel) ListByGroupId(ctx context.Context, groupId st
 
 	var resp []*GroupMembers
 	err := m.QueryRowsNoCacheCtx(ctx, &resp, query, groupId)
-
+	fmt.Printf("[ListByGroupId] Group {%v} users %v", groupId, resp)
 	switch err {
 	case nil:
 		return resp, nil

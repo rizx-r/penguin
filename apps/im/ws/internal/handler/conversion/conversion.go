@@ -1,6 +1,7 @@
 package conversion
 
 import (
+	"fmt"
 	"github.com/mitchellh/mapstructure"
 	"penguin/apps/im/ws/internal/svc"
 	"penguin/apps/im/ws/websocket"
@@ -13,7 +14,6 @@ import (
 
 func Chat(svc *svc.ServiceContext) websocket.HandlerFunc {
 	return func(srv *websocket.Server, conn *websocket.Conn, msg *websocket.Message) {
-		// todo: 私聊
 		var data ws.Chat
 		if err := mapstructure.Decode(msg.Data, &data); err != nil {
 			srv.Send(websocket.NewErrMessage(err), conn)
@@ -24,8 +24,10 @@ func Chat(svc *svc.ServiceContext) websocket.HandlerFunc {
 			switch data.ChatType {
 			case constants.SingleChatType:
 				data.ConversationId = wuid.CombineId(conn.Uid, data.RecvId)
+				fmt.Println("handle conversation.chat: SingleChatType")
 			case constants.GroupChatType:
 				data.ConversationId = data.RecvId
+				fmt.Println("handle conversation.chat: groupChatType")
 
 			}
 		}
@@ -48,7 +50,7 @@ func Chat(svc *svc.ServiceContext) websocket.HandlerFunc {
 
 func MarkRead(svc *svc.ServiceContext) websocket.HandlerFunc {
 	return func(srv *websocket.Server, conn *websocket.Conn, msg *websocket.Message) {
-		// todo: 已读未读处理
+		// 已读未读处理
 		var data ws.MarkRead
 		if err := mapstructure.Decode(msg.Data, &data); err != nil {
 			srv.Send(websocket.NewErrMessage(err), conn)

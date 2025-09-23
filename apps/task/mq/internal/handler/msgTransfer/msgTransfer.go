@@ -27,13 +27,15 @@ func NewBaseMsgTransfer(svcCtx *svc.ServiceContext) *BaseMsgTransfer {
 
 // Transfer 转发消息
 func (m *BaseMsgTransfer) Transfer(ctx context.Context, data *ws.Push) error {
+	fmt.Println("[Transfer] ", data)
 	var err error
 
-	// TODO:
 	switch data.ChatType {
 	case constants.GroupChatType:
+		fmt.Println("[GroupChat] ", data)
 		err = m.group(ctx, data)
 	case constants.SingleChatType:
+		fmt.Println("[SingleChat] ", data)
 		err = m.single(ctx, data)
 	default:
 		err = fmt.Errorf("unknown chat type: %s", data.ChatType)
@@ -60,7 +62,7 @@ func (m *BaseMsgTransfer) group(ctx context.Context, data *ws.Push) error {
 		if user.UserId == data.SendId {
 			continue
 		}
-		data.RecvIds = append(data.RecvIds, data.SendId)
+		data.RecvIds = append(data.RecvIds, user.UserId)
 	}
 	// 发送消息
 	return m.sendWebsocketMessage(data)
