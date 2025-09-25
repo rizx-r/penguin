@@ -1,0 +1,17 @@
+# 输入
+filebeat.inputs:
+  - type: log
+    enabled: true
+    paths:
+      - /opt/1panel/docker/compose/etcd/components/apisix/logs/access.log
+    fields_under_root: true
+    fields:
+      type: apisix
+
+# 输出
+#output.console:
+#  pretty: true
+#  enable: true
+
+output.logstash:
+  hosts: ["192.168.5.247:5044"]
